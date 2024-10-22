@@ -19,14 +19,24 @@ public class KalkinsoServiceBean {
     @Value("${kalkinso.base.url}")
     private String baseUrl;
 
+    @Value("${kalkinso.email}")
+    private String email;
 
-    public SessionCreationResponse sessionCreation(SessionCreationRequest request) {
-        String url = baseUrl + "/auth/login/email";
+    @Value("${kalkinso.password}")
+    private String password;
+
+
+    public SessionCreationResponse sessionCreation() {
+        SessionCreationRequest request = new SessionCreationRequest();
+        request.setEmail(email);
+        request.setPassword(password);
+
+        String url = baseUrl + "auth/login/email";
         return restTemplate.postForObject(url, request, SessionCreationResponse.class);
     }
 
     public LoginResponse login(LoginRequest request, String token) {
-        String url = baseUrl + "/organizations/login";
+        String url = baseUrl + "organizations/login";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("X-Auth-Token", token);
