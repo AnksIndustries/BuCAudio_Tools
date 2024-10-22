@@ -3,6 +3,8 @@ package com.bucaudio.service;
 import com.bucaudio.common.exception.InvalidUserInformation;
 import com.bucaudio.entity.UserInfo;
 import com.bucaudio.kalkinso.dto.AddUserRequest;
+import com.bucaudio.kalkinso.dto.LoginRequest;
+import com.bucaudio.kalkinso.dto.LoginResponse;
 import com.bucaudio.kalkinso.dto.SessionCreationResponse;
 import com.bucaudio.kalkinso.service.KalkinsoServiceBean;
 import com.bucaudio.repository.UserInfoRepository;
@@ -86,6 +88,23 @@ public class UserService {
         userInfoRepository.updateUserInfo(userInfo);
         return userInfo;
     }
+
+    public String fetchToolKey(String email) {
+
+        log.debug("Establishing connection with Kalkinso...");
+        SessionCreationResponse sessionResponse = kalkinsoService.sessionCreation();
+
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setAccessKey(accessKey);
+        loginRequest.setUserId(email);
+        loginRequest.setOrgId(orgId);
+        loginRequest.setIpAddress("192.168.0.0");
+
+        log.debug("Retrieving tool token from Kalkinso...");
+        LoginResponse login = kalkinsoService.login(loginRequest, sessionResponse.getToken());
+        return login.getToken();
+    }
+
 
 
     private AddUserRequest constructAddUserRequest(UserInfo userInfo) {

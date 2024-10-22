@@ -79,6 +79,18 @@ public class UserController {
         }
     }
 
+    @GetMapping("/fetchToolKey")
+    @PreAuthorize("hasAuthority('ROLE_AUTHOR') || hasAuthority(ROLE_ADMIN) || hasAuthority(ROLE_PUBLISHER)")
+    public ResponseEntity<?> fetchToolKey(@RequestParam(name = "email") String email) {
+        validateUser(email);
+
+        try {
+            return new ResponseEntity<>(userService.fetchToolKey(email), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     private void validateUser(String email) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (!Objects.equals(email, userDetails.getUsername())) {
